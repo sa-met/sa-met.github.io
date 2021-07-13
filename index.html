@@ -9,8 +9,79 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
         <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     </head>
- <body>
-     
+    <body class="flex flex-col items-center mt-8 bg-gray-700">  
+     <div class="relative rounded-full h-40 w-40">
+         <div id="avatar" class="h-40 w-40 rounded-full bg-gray-600 ring-4 ring-red">
+        </div>
+       </div>
+     <div class="bg-gray-600 py-5 p-5 mt-5 text-white text-center max-w-2xl space-y-1">
+         <h1 id="name" class="font-semibold text-2xl">Yükleniyor.</h1>
+         <h2 class="font-semibold text-xl">Ben samet</h2>
+    </div>
+   <div class="max-w-sm flex flex-col justify-center items-center mt-5 py-5 p-10">
+    <div class="bg-black w-full flex items-center p-2 rounded-xl shadow border border-green-400">
+      <div id="art" class="flex items-center space-x-4 md:py-5 md:p-5">
+    </div>
+    <div class="flex-grow p-3 py-5 ml-auto">
+      <div id="aname" class="font-semibold text-white">
+      </div>
+      <div id="adec" class="text-sm text-gray-400">
+        Yükleniyor
+      </div>
+     <div id="album" class="text-sm text-gray-400">
+      </div>            
+      <div  class="text-sm text-green-400">
+      </div>
+    </div>
+    <div id="album_art" class="p-3 py-5">
+    </div>
+  </div>
+ </div>
+ 
+   <script>
+     let ws = new WebSocket('wss://api.lanyard.rest/socket');
+     let Interval;
+
+        ws.onopen = () => {
+          ws.send(
+            JSON.stringify({
+              op: 2,
+              d: {
+                subscribe_to_id: "863015512195072001",
+              },
+            })
+          );
+    
+          Interval = setInterval(() => {
+            ws.send(
+              JSON.stringify({
+                op: 3,
+              })
+            );
+          }, 3000);
+        };
+    
+        ws.onmessage = (msg) => {
+          msg = JSON.parse(msg.data);
+          if (!['INIT_STATE', 'PRESENCE_UPDATE'].includes(msg.t)) return;
+            let user = msg.d;
+            $("#name").text(user.discord_user.username+"#"+user.discord_user.discriminator)
+            $("#avatar").html(`<img src="https://cdn.discordapp.com/avatars/863015512195072001/${user.discord_user.avatar}.webp" class="flex rounded-full h-40 w-40 mt-auto ml-auto">`)
+            
+            if (msg.d.spotify.track_id) {
+              $("#game").removeClass("hidden");
+              $("#aname").text(msg.d.spotify.song)
+              $("#adec").text(msg.d.spotify.artist)
+              $("#album").text(msg.d.spotify.album)
+              $("#art").html(`<img class="w-16 h-16 rounded-lg" src="${msg.d.spotify.album_art_url}">`)
+              $("#album_art").html(`<img src="${msg.d.spotify.album_art_url}" class="animate-spin w-6 h-6 rounded-full order-1">`)
+                
+            } else {
+              $("#game").addClass("hidden");  
+            }
+        };
+    </script>
  </body>
 </html>
