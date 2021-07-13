@@ -14,7 +14,7 @@
    </head>
     <body class="flex flex-col items-center mt-8 bg-gray-700">  
      <div class="relative rounded-full h-40 w-40">
-        <div id="avatar" class="h-40 w-40 rounded-full bg-gray-600 ring-4 ring-red">
+        <div id="avatar" class="h-40 w-40 rounded-full bg-gray-600 ring-4">
         </div>
         <div id="status">
          </div>
@@ -80,20 +80,24 @@
           if (!['INIT_STATE', 'PRESENCE_UPDATE'].includes(msg.t)) return;
             let user = msg.d;
             $("#name").text(user.discord_user.username+"#"+user.discord_user.discriminator)
-            $("#avatar").html(`<img src="https://cdn.discordapp.com/avatars/863015512195072001/${user.discord_user.avatar}.webp" class="flex rounded-full h-40 w-40 mt-auto ml-auto">`)
+            $("#avatar").html(`<img src="https://cdn.discordapp.com/avatars/863015512195072001/${user.discord_user.avatar}.gif" class="flex rounded-full h-40 w-40 mt-auto ml-auto">`)
             console.log(msg.d)
            
             if(msg.d.discord_status === "online") {
              $("#status").html(`<span class="absolute bottom-2 right-3  inline-block w-6 h-6 mr-2 bg-green-600 ring-2 ring-green-500 rounded-full"></span>`)
+             $("#avatar").addClass("ring-green-500")
             }
             if(msg.d.discord_status === "offline") {
              $("#status").html(`<span class="absolute bottom-2 right-3  inline-block w-6 h-6 mr-2 bg-gray-600 ring-2 ring-gray-500 rounded-full"></span>`)
+             $("#avatar").addClass("ring-gray-500")
             }
             if(msg.d.discord_status === "dnd") {
              $("#status").html(`<span class="absolute bottom-2 right-3  inline-block w-6 h-6 mr-2 bg-red-600 ring-2 ring-red-500  rounded-full"></span>`)
+             $("#avatar").addClass("ring-red-600")
             }
             if(msg.d.discord_status === "idle") {
              $("#status").html(`<span class="absolute bottom-2 right-3  inline-block w-6 h-6 mr-2 bg-yellow-600 ring-2 ring-yellow-500 rounded-full"></span>`)
+             $("#avatar").addClass("ring-yellow-600")
             }
             
             if (msg.d.spotify.track_id) {
