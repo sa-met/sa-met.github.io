@@ -58,7 +58,6 @@
  
    <script>
      let ws = new WebSocket('wss://api.lanyard.rest/socket');
-     let Interval;
 
         ws.onopen = () => {
           ws.send(
@@ -70,7 +69,7 @@
             })
           );
     
-          Interval = setInterval(() => {
+          setInterval(() => {
             ws.send(
               JSON.stringify({
                 op: 3,
@@ -80,14 +79,12 @@
         };
        ws.onmessage = (msg) => {
           msg = JSON.parse(msg.data);
-          if (!['INIT_STATE', 'PRESENCE_UPDATE'].includes(msg.t)) return;
-            let user = msg.d;
-            $("#name").text(user.discord_user.username+"#"+user.discord_user.discriminator)
-            $("#avatar").html(`<img src="https://cdn.discordapp.com/avatars/863015512195072001/${user.discord_user.avatar}.gif" class="flex rounded-full h-40 w-40 mt-auto ml-auto">`)
-            console.log(msg.d)
+          if (msg.t != 'INIT_STATE' && msg.t != 'PRESENCE_UPDATE') return;
+            $("#name").text(msg.d.discord_user.username+"#"+msg.d.discord_user.discriminator)
+            $("#avatar").html(`<img src="https://cdn.discordapp.com/avatars/863015512195072001/${msg.d.discord_user.avatar.startsWith("a_") ? `${msg.d.discord_user.avatar}.gif` : `${msg.d.discord_user.avatar}.png`}" class="flex rounded-full h-40 w-40 mt-auto ml-auto">`)
            
             if(msg.d.discord_status === "online") {
-             $("#status").html(`<span class="absolute bottom-2 right-3  inline-block w-6 h-6 mr-2 bg-green-600 ring-2 ring-green-500 rounded-full"></span>`)
+             $("#status").html(`<span class="absolute bottom-2 right-3 inline-block w-6 h-6 mr-2 bg-green-600 ring-2 ring-green-500 rounded-full"></span>`)
              $("#avatar").addClass("ring-green-500")
             }
             if(msg.d.discord_status === "offline") {
@@ -103,7 +100,7 @@
              $("#avatar").addClass("ring-yellow-600")
             }
             
-            if (msg.d.spotify.track_id) {
+            if (msg.d.spotify && msg.d.spotify.track_id) {
               $("#game").removeClass("hidden");
               $("#aname").text(msg.d.spotify.song)
               $("#adec").text(msg.d.spotify.artist)
