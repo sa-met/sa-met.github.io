@@ -80,6 +80,7 @@
        ws.onmessage = (msg) => {
           msg = JSON.parse(msg.data);
           if (msg.t != 'INIT_STATE' && msg.t != 'PRESENCE_UPDATE') return;
+           console.log(msg)
             $("#name").text(msg.d.discord_user.username+"#"+msg.d.discord_user.discriminator)
             $("#avatar").html(`<img src="https://cdn.discordapp.com/avatars/894594782897262635/${msg.d.discord_user.avatar.startsWith("a_") ? `${msg.d.discord_user.avatar}.gif` : `${msg.d.discord_user.avatar}.png`}" class="flex rounded-full h-40 w-40 mt-auto ml-auto">`)
            
